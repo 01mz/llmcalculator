@@ -40,31 +40,44 @@ export default function Home() {
   const [LLMResult2, setLLMResult2] = useState<string>('0');
   const [SYResult, setSYResult] = useState<string>('0');
 
-  const compute = debounce(async () => {
-    const correctValue = shuntingYardCalculate(input || '0');
 
-    setSYResult(isNaN(correctValue) ? 'ERR': correctValue.toString());
+  const models = {
+    'llama3-8b-8192': 1,
+    'llama-3.1-70b-versatile': 2,
+  }
 
-
-    console.log(input);
-
-    const response1 = await fetch('/api/calculate', {
+  const LLMcalculate = async (input: string, llm: number) => {
+    const response = await fetch('/api/calculate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ input, llm: 1 }),
+      body: JSON.stringify({ input, llm }),
     });
-    // const response2 = await fetch('/api/calculate', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({ input, llm: 1 }),
-    // });
 
-    const data1 = await response1.json();
-    setLLMResult1(data1);
+    return await response.json();
+  }
+
+  const compute = debounce(async () => {
+    const correctValue = shuntingYardCalculate(input || '0');
+
+    setSYResult(isNaN(correctValue) ? 'ERR' : correctValue.toString());
+
+
+    console.log(input);
+
+    setLLMResult1('...');
+    setLLMResult2('...');
+    LLMcalculate(input, models['llama3-8b-8192'])
+      .then((res) => {
+        setLLMResult1(res)
+      });
+
+    LLMcalculate(input, models['llama-3.1-70b-versatile'])
+      .then((res) => {
+        setLLMResult2(res)
+      });
+
   }, 100);
 
 
@@ -84,24 +97,24 @@ export default function Home() {
       <div>{SYResult !== '' && `= ${SYResult}`}</div>
     </div>
     <div style={styles.buttons}>
-    {buttons.map((value) => <button style={styles.button} key={value} onClick={() => {
-      switch (value) {
-        case '=':
-          compute();
-          break;
-        case 'C':
-          setInput('');
-          break;
-        case '⌫':
-          setInput(curr => curr.substring(0, curr.length-1));
-          break;
-        default:
-          setInput(curr => curr + value);
-      }
+      {buttons.map((value) => <button style={styles.button} key={value} onClick={() => {
+        switch (value) {
+          case '=':
+            compute();
+            break;
+          case 'C':
+            setInput('');
+            break;
+          case '⌫':
+            setInput(curr => curr.substring(0, curr.length - 1));
+            break;
+          default:
+            setInput(curr => curr + value);
+        }
 
-    }}>
-      {value}
-    </button>)
-    }</div>
+      }}>
+        {value}
+      </button>)
+      }</div>
   </div>
 }

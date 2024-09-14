@@ -1,21 +1,35 @@
 import { NextResponse } from "next/server";
+import Groq from "groq-sdk";
+import { systemPrompt } from "./systemPrompt";
 
-const values = ['123', '456'];
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-// To handle a GET request to /api/calculate
-export async function GET(req: Request) {
-    console.log(req);
-    return NextResponse.json(values, {
-        status: 200
+async function getGroqChatCompletion(input: string, llm: number) {
+    return groq.chat.completions.create({
+      messages: [
+        {role: 'system',
+        content: systemPrompt,
+        },
+        {
+          role: 'user',
+          content: input,
+        },
+      ],
+      model: llm === 1 ? 'llama3-8b-8192' : 'llama-3.1-70b-versatile',
     });
-}
-
+  }
 
 // To handle a POST request to /api/calculate
 export async function POST(req: Request) {
     const { input, llm } = await req.json();
     console.log(input, llm);
-    return NextResponse.json(values[0], {
+
+    const chatCompletion = await getGroqChatCompletion(input, llm);
+    // Print the completion returned by the LLM.
+    const firstResult = chatCompletion.choices[0]?.message?.content || ""
+    console.log(chatCompletion);
+
+    return NextResponse.json(firstResult, {
         status: 200
     });
 }
