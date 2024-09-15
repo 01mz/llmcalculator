@@ -3,35 +3,7 @@
 import { useState } from "react";
 import debounce from 'lodash.debounce';
 import { shuntingYardCalculate } from "./shuntingYardCalculate";
-
-const styles = {
-  calculator: {
-    display: 'inline-block',
-    border: '1px solid #ccc',
-    padding: '20px',
-    borderRadius: '10px',
-    fontFamily: 'Arial, sans-serif',
-  },
-  display: {
-    background: '#f4f4f4',
-    marginBottom: '10px',
-    padding: '10px',
-    fontSize: '24px',
-  },
-  buttons: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
-    gap: '5px',
-  },
-  button: {
-    background: 'lightgreen',
-    color: 'darkgreen',
-    border: 'none',
-    padding: '20px',
-    fontSize: '18px',
-    cursor: 'pointer',
-  },
-};
+import styles from './page.module.css';
 
 export default function Home() {
   const [input, setInput] = useState<string>('');
@@ -42,8 +14,8 @@ export default function Home() {
 
 
   const models = {
-    'llama3-8b-8192': 1,
-    'llama-3.1-70b-versatile': 2,
+    'llama3-8b-8192': 0,
+    'llama-3.1-70b-versatile': 1,
   }
 
   const LLMcalculate = async (input: string, llm: number) => {
@@ -60,11 +32,8 @@ export default function Home() {
 
   const compute = debounce(async () => {
     const correctValue = shuntingYardCalculate(input || '0');
-
     setSYResult(isNaN(correctValue) ? 'ERR' : correctValue.toString());
 
-
-    console.log(input);
 
     setLLMResult1('...');
     setLLMResult2('...');
@@ -89,15 +58,18 @@ export default function Home() {
     '0', '=', '⌫'
   ]
 
-  return <div style={styles.calculator}>
-    <div style={styles.display}>
-      <div>{input || '0'}</div>
-      <div>{LLMResult1 !== '' && `= ${LLMResult1}`}</div>
-      <div>{LLMResult2 !== '' && `= ${LLMResult2}`}</div>
-      <div>{SYResult !== '' && `= ${SYResult}`}</div>
+  return <div className={styles.calculator}>
+    <div className={styles.display}>
+      <div className={styles.inputDisplay}>{input || '0'}</div>
+      <div className={styles.label}>{Object.keys(models)[0]}:</div>
+      <div>{`= ${LLMResult1}`}</div>
+      <div className={styles.label}>{Object.keys(models)[1]}:</div>
+      <div>{`= ${LLMResult2}`}</div>
+      <div className={styles.label}>Shunting Yard Algorithm:</div>
+      <div>{`= ${SYResult}`}</div>
     </div>
-    <div style={styles.buttons}>
-      {buttons.map((value) => <button style={styles.button} key={value} onClick={() => {
+    <div className={styles.buttons}>
+      {buttons.map((value) => <button className={styles.button} key={value} onClick={() => {
         switch (value) {
           case '=':
             compute();
@@ -116,5 +88,7 @@ export default function Home() {
         {value}
       </button>)
       }</div>
+    <div className={styles.hint}>Try 10+1010.</div>
+    <div className={styles.hint}>Source code on <a href="https://github.com/01mz/llmcalculator" target="_blank" rel="noopener noreferrer">Github</a>.</div>
   </div>
 }
