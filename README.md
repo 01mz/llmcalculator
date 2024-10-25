@@ -11,9 +11,9 @@ Next.js app hosted on Vercel, calls Groq API to query Llama models.
 ![architecture](./images/architecture.png)
 
 ## Local development
+Create `.env.local` file and specify a `GROQ_API_KEY`.
 
 Run the development server:
-
 ```bash
 npm run dev
 # or
