@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import Groq from "groq-sdk";
 import { systemPrompt } from "./systemPrompt";
+import { sanitizeInput } from "@/app/utils/sanitizeInput";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
@@ -24,7 +25,8 @@ export async function POST(req: Request) {
     const { input, llm } = await req.json();
     console.log("LOG:", input, llm);
 
-    const chatCompletion = await getGroqChatCompletion(input, llm);
+    const sanitizedInput = sanitizeInput(input);
+    const chatCompletion = await getGroqChatCompletion(sanitizedInput, llm);
     const firstResult = chatCompletion.choices[0]?.message?.content || ""
 
     return NextResponse.json(firstResult, {
