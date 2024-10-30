@@ -5,21 +5,15 @@ import debounce from 'lodash.debounce';
 import { shuntingYardCalculate } from "./shuntingYardCalculate";
 import styles from './page.module.css';
 import { sanitizeInput } from "./utils/sanitizeInput";
+import { models } from "./utils/models";
 
 export default function Home() {
   const [input, setInput] = useState<string>('');
-  const [detectedInput, setDetectedInput] = useState<string>('');
   const [imageInput, setImageInput] = useState<string>('');
 
   const [LLMResult1, setLLMResult1] = useState<string>('0');
   const [LLMResult2, setLLMResult2] = useState<string>('0');
   const [SYResult, setSYResult] = useState<string>('0');
-
-
-  const models = {
-    'llama3-8b-8192': 0,
-    'llama-3.1-70b-versatile': 1,
-  }
 
   const LLMcalculate = async (input: string, llm: number) => {
     const response = await fetch('/api/calculate', {
@@ -40,12 +34,12 @@ export default function Home() {
 
     setLLMResult1('...');
     setLLMResult2('...');
-    LLMcalculate(input, models['llama3-8b-8192'])
+    LLMcalculate(input, models["llama3-8b-8192"])
       .then((res) => {
         setLLMResult1(res)
       });
 
-    LLMcalculate(input, models['llama-3.1-70b-versatile'])
+    LLMcalculate(input, models["llama-3.1-70b-versatile"])
       .then((res) => {
         setLLMResult2(res)
       });
@@ -57,7 +51,6 @@ export default function Home() {
       return;
     }
 
-    setDetectedInput('...');
     setInput('...');
     try {
       const response = await fetch('api/inferImageText', {
@@ -69,7 +62,6 @@ export default function Home() {
       });
       const data = await response.json();
       console.log('Image inference result:', data);
-      setDetectedInput(data);
 
       const sanitizedInput = sanitizeInput(data);
       setInput(sanitizedInput);
@@ -139,9 +131,94 @@ export default function Home() {
 
   };
 
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioUrl, setAudioUrl] = useState<string>('');
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+
+  const handleAudioUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const audioFile = e.target.files?.[0];
+    if (audioFile) {
+      const audioUrl = URL.createObjectURL(audioFile);
+      setAudioUrl(audioUrl);
+      inferAudioInput(audioFile);
+    }
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+
+      mediaRecorder.ondataavailable = (event) => {
+        audioChunksRef.current.push(event.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        // Combine audio chunks into a single Blob
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        setAudioUrl(audioUrl);
+        inferAudioInput(audioBlob);
+        audioChunksRef.current = []; // Reset chunks for next recording
+      };
+
+      mediaRecorder.start();
+      mediaRecorderRef.current = mediaRecorder;
+      setIsRecording(true);
+    } catch (error) {
+      console.error("Error accessing microphone:", error);
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stream.getAudioTracks().forEach(track => track.stop());
+      setIsRecording(false);
+    }
+  };
+
+  const inferAudioInput = async (audioBlob: Blob) => {
+    if (!audioBlob) return;
+
+    const formData = new FormData();
+    formData.append("audioFile", audioBlob, "recording.wav");
+
+    try {
+      const response = await fetch('api/inferAudioInput', {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.json();
+      console.log('Audio inference result:', data);
+
+      const sanitizedInput = sanitizeInput(data);
+      setInput(sanitizedInput);
+      compute(sanitizedInput);
+
+    } catch (error) {
+      console.error("Error inferring audio:", error);
+    }
+  };
+
   return <div className={styles.app}>
     <details>
-      <summary>📸 Image Input</summary>
+      <summary>🔊 Voice Input <span className={styles.label}>(whisper-large-v3-turbo)</span></summary>
+      <div className={styles.audioInputContainer}>
+        <div className={styles.label}>Capture voice:</div>
+        <button onClick={isRecording ? stopRecording : startRecording}>
+          {isRecording ? "⏸ Stop Recording " : "▶ Start Recording"}
+        </button>
+
+        <div className={styles.label}>or upload audio file:</div>
+        <input type="file" accept="audio/*" onChange={handleAudioUpload} />
+        {audioUrl && (!isRecording ?
+          <audio controls src={audioUrl} className={styles.audioPreview} /> : <p>recording...</p>)}
+      </div>
+    </details>
+
+    <details>
+      <summary>📸 Camera Input <span className={styles.label}>(llama-3.2-90b-vision-preview)</span></summary>
       <div className={styles.imageInputContainer}>
         <div className={styles.label}>Capture image:</div>
         <div>
@@ -161,13 +238,11 @@ export default function Home() {
 
     <div className={styles.calculator}>
       <div className={styles.display}>
-        <div className={styles.label}>Detected Input:</div>
-        <div className={styles.inputDisplay}>{detectedInput || '0'}</div>
-        <div className={styles.label}>Sanitized Input:</div>
+        <div className={styles.label}>Input:</div>
         <div className={styles.inputDisplay}>{input || '0'}</div>
-        <div className={styles.label}>{Object.keys(models)[0]}:</div>
+        <div className={styles.label}>{models[models["llama3-8b-8192"]]}:</div>
         <div>{`= ${LLMResult1}`}</div>
-        <div className={styles.label}>{Object.keys(models)[1]}:</div>
+        <div className={styles.label}>{models[models["llama-3.1-70b-versatile"]]}:</div>
         <div>{`= ${LLMResult2}`}</div>
         <div className={styles.label}>Shunting Yard Algorithm:</div>
         <div>{`= ${SYResult}`}</div>
@@ -194,10 +269,10 @@ export default function Home() {
         }</div>
     </div>
 
-    <div className={styles.hintContainer}>
+    <div>
       <div className={styles.hint}>Try 10+1010.</div>
       <div className={styles.hint}>Source code on <a href="https://github.com/01mz/llmcalculator" target="_blank" rel="noopener noreferrer">Github</a>.<br />
-        Sample input <a href="https://github.com/01mz/llmcalculator/tree/main/sample_input/images" target="_blank" rel="noopener noreferrer">images</a>.</div>
+        Sample input <a href="https://github.com/01mz/llmcalculator/tree/main/sample_input/images" target="_blank" rel="noopener noreferrer">images</a> and <a href="https://github.com/01mz/llmcalculator/tree/main/sample_input/audio" target="_blank" rel="noopener noreferrer">audio</a>.</div>
     </div>
   </div>
 }

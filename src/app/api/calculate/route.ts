@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import Groq from "groq-sdk";
 import { systemPrompt } from "./systemPrompt";
 import { sanitizeInput } from "@/app/utils/sanitizeInput";
+import { models } from "@/app/utils/models";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
@@ -16,7 +17,8 @@ async function getGroqChatCompletion(input: string, llm: number) {
           content: input,
         },
       ],
-      model: llm === 0 ? 'llama3-8b-8192' : 'llama-3.1-70b-versatile',
+      model: models[llm],
+      temperature: 1,
     });
   }
 

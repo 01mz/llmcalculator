@@ -36,7 +36,6 @@ async function getGroqChatCompletion(imageUrl: string) {
   });
 }
 
-// To handle a POST request to /api/calculate
 export async function POST(req: Request) {
   const { imageUrl } = await req.json();
   console.log("LOG:", imageUrl);
