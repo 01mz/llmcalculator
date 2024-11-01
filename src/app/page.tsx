@@ -46,13 +46,13 @@ export default function Home() {
 
   }, 100);
 
-  const inferImageText = debounce(async (imageBlob: Blob) => {
-    if (!imageBlob) {
+  const inferImageText = debounce(async (imageFile: File) => {
+    if (!imageFile) {
       return;
     }
 
     const formData = new FormData();
-    formData.append("imageFile", imageBlob, "image.png");
+    formData.append("imageFile", imageFile, imageFile.name);
 
     setInput('...');
     try {
@@ -122,7 +122,7 @@ export default function Home() {
       if (imageBlob) {
         const imageUrl = URL.createObjectURL(imageBlob);
         setImageInput(imageUrl);
-        inferImageText(imageBlob);
+        inferImageText(new File([imageBlob], "image", { type: "image/png" }));
       }
     });
 
@@ -156,7 +156,7 @@ export default function Home() {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
         const audioUrl = URL.createObjectURL(audioBlob);
         setAudioUrl(audioUrl);
-        inferAudioInput(audioBlob);
+        inferAudioInput(new File([audioBlob], "recording", { type: "audio/wav" }));
         audioChunksRef.current = []; // Reset chunks for next recording
       };
 
@@ -175,11 +175,11 @@ export default function Home() {
     }
   };
 
-  const inferAudioInput = debounce(async (audioBlob: Blob) => {
-    if (!audioBlob) return;
+  const inferAudioInput = debounce(async (audioFile: File) => {
+    if (!audioFile) return;
 
     const formData = new FormData();
-    formData.append("audioFile", audioBlob, "recording.wav");
+    formData.append("audioFile", audioFile, audioFile.name);
 
     setInput('...');
     try {

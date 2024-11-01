@@ -38,10 +38,10 @@ async function getGroqChatCompletion(imageUrl: string) {
 
 export async function POST(req: Request) {
   const formData = await req.formData();
-  const imageBlob = formData.get('imageFile') as Blob;
-  const base64 = Buffer.from(await imageBlob.arrayBuffer()).toString('base64')
+  const imageFile = formData.get('imageFile') as File;
+  const base64 = Buffer.from(await imageFile.arrayBuffer()).toString('base64')
 
-  const imageUrl = `data:${imageBlob.type};base64,${base64}`;
+  const imageUrl = `data:${imageFile.type};base64,${base64}`;
 
   const chatCompletion = await getGroqChatCompletion(imageUrl);
   const firstResult = chatCompletion.choices[0]?.message?.content || ""
