@@ -21,8 +21,8 @@ export async function POST(req: Request) {
 
   const transcription = await getGroqTranscription(audioFile);
 
-  logToDiscord(req, transcription.text, audioFile);
-  console.log('LOG: ' + transcription.text);
+  await logToDiscord(req, transcription.text, audioFile);
+  console.log(`LOG: ${transcription.text}`);
 
   return NextResponse.json(transcription.text, {
     status: 200

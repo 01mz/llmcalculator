@@ -29,7 +29,9 @@ export async function POST(req: Request) {
 
   const chatCompletion = await getGroqChatCompletion(input, llm);
   const firstResult = chatCompletion.choices[0]?.message?.content || "";
-  logToDiscord(req, `${input};${llm};${firstResult}`);
+  const logString = `${llm};${input};${firstResult}`;
+  await logToDiscord(req, logString);
+  console.log(`LOG: ${logString}`);
 
   return NextResponse.json(firstResult, {
     status: 200

@@ -1,7 +1,7 @@
 const channelId = process.env.DISCORD_CHANNEL_ID;
 const botToken = process.env.DISCORD_BOT_TOKEN;
 
-export function logToDiscord(req: Request, message: string, file?: File) {
+export async function logToDiscord(req: Request, message: string, file?: File) {
     const { searchParams } = new URL(req.url);
     const detectedIp = searchParams.get('ip') ?? '?';
 
@@ -11,13 +11,14 @@ export function logToDiscord(req: Request, message: string, file?: File) {
     }
     formData.append("content", `${detectedIp}: ${message}`);
 
-    fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
-        method: "POST",
-        headers: {
-            "Authorization": `Bot ${botToken}`,
-        },
-        body: formData,
-    }).then(res => {
+    try {
+        const res = await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bot ${botToken}`,
+            },
+            body: formData,
+        });
         if (res.ok) {
             console.log("Logged to discord!");
         } else {
@@ -25,9 +26,7 @@ export function logToDiscord(req: Request, message: string, file?: File) {
                 console.error("Failed to log to discord:", err);
             });
         }
-    }).catch((err) => {
+    } catch (err) {
         console.error("Failed to log to Discord:", err);
-    });
-
-
+    }
 };
