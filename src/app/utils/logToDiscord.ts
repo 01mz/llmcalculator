@@ -19,12 +19,14 @@ export function logToDiscord(req: Request, message: string, file?: File) {
         body: formData,
     }).then(res => {
         if (res.ok) {
-            console.log("File uploaded successfully!");
+            console.log("Logged to discord!");
         } else {
             res.json().then(err => {
-                console.error("Failed to upload file:", err);
+                console.error("Failed to log to discord:", err);
             });
         }
+    }).catch((err) => {
+        console.error("Failed to log to Discord:", err);
     });
 
 
