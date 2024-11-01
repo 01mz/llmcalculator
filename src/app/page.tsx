@@ -4,7 +4,6 @@ import { ChangeEvent, useRef, useState } from "react";
 import debounce from 'lodash.debounce';
 import { shuntingYardCalculate } from "./shuntingYardCalculate";
 import styles from './page.module.css';
-import { sanitizeInput } from "./utils/sanitizeInput";
 import { models } from "./utils/models";
 
 export default function Home() {
@@ -63,9 +62,8 @@ export default function Home() {
       const data = await response.json();
       console.log('Image inference result:', data);
 
-      const sanitizedInput = sanitizeInput(data);
-      setInput(sanitizedInput);
-      compute(sanitizedInput);
+      setInput(data);
+      compute(data);
 
     } catch (error) {
       console.error('Error infering image text:', error);
@@ -190,9 +188,8 @@ export default function Home() {
       const data = await response.json();
       console.log('Audio inference result:', data);
 
-      const sanitizedInput = sanitizeInput(data);
-      setInput(sanitizedInput);
-      compute(sanitizedInput);
+      setInput(data);
+      compute(data);
 
     } catch (error) {
       console.error("Error inferring audio:", error);
@@ -208,7 +205,7 @@ export default function Home() {
           {isRecording ? "⏸ Stop Recording " : "▶ Start Recording"}
         </button>
 
-        <div className={styles.label}>or upload audio file:</div>
+        <div className={styles.label}>or upload audio file (max 25MB):</div>
         <input type="file" accept="audio/*" onChange={handleAudioUpload} />
         {audioUrl && (!isRecording ?
           <audio controls src={audioUrl} className={styles.audioPreview} /> : <p>recording...</p>)}
@@ -228,7 +225,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className={styles.label}>or upload image:</div>
+        <div className={styles.label}>or upload image (max 4MB):</div>
         <input type="file" accept="image/*" onChange={handleImageUpload} />
         {imageInput && <img src={imageInput} alt="Image Input Preview" className={styles.imagePreview} />}
       </div>

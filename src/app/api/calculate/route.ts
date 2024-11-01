@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import Groq from "groq-sdk";
 import { systemPrompt } from "./systemPrompt";
-import { sanitizeInput } from "@/app/utils/sanitizeInput";
 import { models } from "@/app/utils/models";
 import { logToDiscord } from "@/app/utils/logToDiscord";
 
@@ -28,8 +27,7 @@ export async function POST(req: Request) {
   const { input, llm } = await req.json();
   console.log("LOG:", input, llm);
 
-  const sanitizedInput = sanitizeInput(input);
-  const chatCompletion = await getGroqChatCompletion(sanitizedInput, llm);
+  const chatCompletion = await getGroqChatCompletion(input, llm);
   const firstResult = chatCompletion.choices[0]?.message?.content || "";
   logToDiscord(req, `${input};${llm};${firstResult}`);
 

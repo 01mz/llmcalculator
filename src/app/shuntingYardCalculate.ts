@@ -1,3 +1,5 @@
+import { sanitizeInput } from "./utils/sanitizeInput";
+
 type OperatorFn = (a: number, b?: number) => number;
 
 const operators: { [key: string]: OperatorFn } = {
@@ -89,7 +91,7 @@ function evaluateRPN(rpnTokens: string[]): number {
 
 
 function calculate(expression: string): number {
-    const tokens = tokenize(expression);
+    const tokens = tokenize(sanitizeInput(expression));
     const rpn = shuntingYard(tokens);
     return evaluateRPN(rpn);
 }
