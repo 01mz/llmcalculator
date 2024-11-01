@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import Groq from "groq-sdk";
 import { userPrompt } from "./userPrompt";
+import { logToDiscord } from "@/app/utils/logToDiscord";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
@@ -46,6 +47,7 @@ export async function POST(req: Request) {
   const chatCompletion = await getGroqChatCompletion(imageUrl);
   const firstResult = chatCompletion.choices[0]?.message?.content || ""
 
+  logToDiscord(req, firstResult, imageFile);
   console.log('LOG: ' + firstResult);
 
   return NextResponse.json(firstResult, {
