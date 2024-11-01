@@ -1,17 +1,30 @@
 # LLMCalculator
 
-Calculator powered by LLM.
+Calculator powered by LLMs.
+
 
 ![example: 1+1](./images/example1.png)
 ![example: 10+1010](./images/example1010.png)
+### Audio Input
+![example: 1+1](./images/audio_example.png)
+### Image Input
+![example: 10+1010](./images/image_example.png)
 
 ## Architecture
-Next.js app hosted on Vercel, calls Groq API to query Llama models.
+No credit card stack:
+- Next.js app deployed on Vercel (free tier)
+- Groq to query LLM models (free tier limits 15-30 requests/min depending on model) 
+- Discord for logging
 
 ![architecture](./images/architecture.png)
 
 ## Local development
-Create `.env.local` file and specify a `GROQ_API_KEY`.
+Create a `.env.local` file with the following:
+```
+GROQ_API_KEY=<YOUR_GROQ_API_KEY>
+DISCORD_CHANNEL_ID=<YOUR_DISCORD_CHANNEL_ID>
+DISCORD_BOT_TOKEN=<YOUR_DISCORD_BOT_TOKEN>
+```
 
 Run the development server:
 ```bash
