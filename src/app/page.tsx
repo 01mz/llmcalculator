@@ -46,19 +46,19 @@ export default function Home() {
 
   }, 100);
 
-  const inferImageText = debounce(async (imageUrl: string) => {
-    if (!imageUrl) {
+  const inferImageText = debounce(async (imageBlob: Blob) => {
+    if (!imageBlob) {
       return;
     }
+
+    const formData = new FormData();
+    formData.append("imageFile", imageBlob, "image.png");
 
     setInput('...');
     try {
       const response = await fetch('api/inferImageText', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ imageUrl }),
+        method: "POST",
+        body: formData,
       });
       const data = await response.json();
       console.log('Image inference result:', data);
@@ -81,18 +81,11 @@ export default function Home() {
   ]
 
   const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const fileReader = new FileReader();
-      fileReader.readAsDataURL(file);
-      // Convert image file to Base64
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const imageUrl = reader.result;
-        setImageInput(imageUrl as string);
-        inferImageText(imageUrl as string);
-      };
-      reader.readAsDataURL(file);
+    const imageFile = e.target.files?.[0];
+    if (imageFile) {
+      const imageUrl = URL.createObjectURL(imageFile);
+      setImageInput(imageUrl);
+      inferImageText(imageFile);
     }
   };
 
@@ -125,9 +118,13 @@ export default function Home() {
     canvas.height = videoRef.current.videoHeight;
     canvas.getContext("2d")?.drawImage(videoRef.current, 0, 0);
 
-    const imageUrl = canvas.toDataURL("image/png");
-    setImageInput(imageUrl);
-    inferImageText(imageUrl);
+    canvas.toBlob((imageBlob) => {
+      if (imageBlob) {
+        const imageUrl = URL.createObjectURL(imageBlob);
+        setImageInput(imageUrl);
+        inferImageText(imageBlob);
+      }
+    });
 
   };
 
@@ -178,12 +175,13 @@ export default function Home() {
     }
   };
 
-  const inferAudioInput = async (audioBlob: Blob) => {
+  const inferAudioInput = debounce(async (audioBlob: Blob) => {
     if (!audioBlob) return;
 
     const formData = new FormData();
     formData.append("audioFile", audioBlob, "recording.wav");
 
+    setInput('...');
     try {
       const response = await fetch('api/inferAudioInput', {
         method: "POST",
@@ -199,7 +197,7 @@ export default function Home() {
     } catch (error) {
       console.error("Error inferring audio:", error);
     }
-  };
+  }, 100);
 
   return <div className={styles.app}>
     <details>

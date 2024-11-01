@@ -34,16 +34,21 @@ async function getGroqChatCompletion(imageUrl: string) {
     "stream": false,
     "stop": null
   });
-}
+};
 
 export async function POST(req: Request) {
-  const { imageUrl } = await req.json();
-  console.log("LOG:", imageUrl);
+  const formData = await req.formData();
+  const imageBlob = formData.get('imageFile') as Blob;
+  const base64 = Buffer.from(await imageBlob.arrayBuffer()).toString('base64')
+
+  const imageUrl = `data:${imageBlob.type};base64,${base64}`;
 
   const chatCompletion = await getGroqChatCompletion(imageUrl);
   const firstResult = chatCompletion.choices[0]?.message?.content || ""
 
+  console.log('LOG: ' + firstResult);
+
   return NextResponse.json(firstResult, {
     status: 200
   });
-}
+};
