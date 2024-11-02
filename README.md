@@ -10,7 +10,8 @@ Calculator powered by LLMs.
 
 ### Image Input
 <img src="./images/image_example2.png" width="300">
-<img src="./images/image_example1.png" width="300">
+<img src="./images/image_example3.png" width="300">
+<img src="./images/image_example3_1.png" width="300">
 
 ## Architecture
 No credit card tech stack:

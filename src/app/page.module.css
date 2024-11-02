@@ -36,7 +36,6 @@
 .display {
     background: #dbfddb;
     color: darkgreen;
-    margin-bottom: 10px;
     padding: 10px;
     font-size: 18px;
     width: 300px;
@@ -70,4 +69,24 @@
 .hint {
     margin-top: 20px;
     font-size: 12px;
+}
+
+.overflowTextContainer {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.overflowTextContainer:hover {
+    color: black;
+}
+
+.overflowTextDialog {
+    color: darkgreen;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 80%;
+    white-space: wrap;
 }

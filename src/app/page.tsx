@@ -8,6 +8,7 @@ import { models } from "@/lib/shared/models";
 import VoiceInput from "./components/VoiceInput";
 import ImageInput from "./components/ImageInput";
 import ButtonsInput from "./components/ButtonsInput";
+import OverflowText from "./components/OverflowText";
 
 export default function Home() {
   const [input, setInput] = useState<string>('');
@@ -32,7 +33,6 @@ export default function Home() {
     const correctValue = shuntingYardCalculate(input || '0');
     setSYResult(isNaN(correctValue) ? 'ERR' : correctValue.toString());
 
-
     setLLMResult1('...');
     setLLMResult2('...');
     LLMcalculate(input, models["llama3-8b-8192"])
@@ -47,24 +47,22 @@ export default function Home() {
 
   }, 100);
 
-
   return <div className={styles.app}>
     <VoiceInput setInput={setInput} compute={compute} />
     <ImageInput setInput={setInput} compute={compute} />
 
-    <div className={styles.calculator}>
-      <div className={styles.display}>
-        <div className={styles.label}>Input:</div>
-        <div className={styles.inputDisplay}>{input || '0'}</div>
-        <div className={styles.label}>{models[models["llama3-8b-8192"]]}:</div>
-        <div>{`= ${LLMResult1}`}</div>
-        <div className={styles.label}>{models[models["llama-3.1-70b-versatile"]]}:</div>
-        <div>{`= ${LLMResult2}`}</div>
-        <div className={styles.label}>Shunting Yard Algorithm:</div>
-        <div>{`= ${SYResult}`}</div>
-      </div>
-      <ButtonsInput input={input} setInput={setInput} compute={compute} />
+    <div className={styles.display}>
+      <div className={styles.label}>Input:</div>
+      <OverflowText className={styles.inputDisplay} text={input || '0'} />
+
+      <div className={styles.label}>{models[models["llama3-8b-8192"]]}:</div>
+      <OverflowText text={`= ${LLMResult1}`} />
+      <div className={styles.label}>{models[models["llama-3.1-70b-versatile"]]}:</div>
+      <OverflowText text={`= ${LLMResult2}`} />
+      <div className={styles.label}>Shunting Yard Algorithm:</div>
+      <OverflowText text={`= ${SYResult}`} />
     </div>
+    <ButtonsInput input={input} setInput={setInput} compute={compute} />
 
     <footer>
       <div className={styles.hint}>Try 10+1010.</div>
