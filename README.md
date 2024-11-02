@@ -9,7 +9,8 @@ Calculator powered by LLMs.
 <img src="./images/audio_example.png" width="300">
 
 ### Image Input
-<img src="./images/image_example.png" width="300">
+<img src="./images/image_example2.png" width="300">
+<img src="./images/image_example1.png" width="300">
 
 ## Architecture
 No credit card tech stack:
