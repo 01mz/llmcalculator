@@ -40,7 +40,7 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Future Considerations
+## Future Todos
 - Engineer better prompts, adjust model parameters, sanitize inputs 
 - To improve calculator accuracy could look into Groq [tool use](https://console.groq.com/docs/tool-use) to get the LLM to call a calculation function
 - Look into Wolfram Alpha API?
