@@ -2,16 +2,17 @@
 
 Calculator powered by LLMs.
 
+<img src="./images/example1.png" width="300">
+<img src="./images/example1010.png" width="300">
 
-![example: 1+1](./images/example1.png)
-![example: 10+1010](./images/example1010.png)
 ### Audio Input
-![example: 1+1](./images/audio_example.png)
+<img src="./images/audio_example.png" width="300">
+
 ### Image Input
-![example: 10+1010](./images/image_example.png)
+<img src="./images/image_example.png" width="300">
 
 ## Architecture
-No credit card stack:
+No credit card tech stack:
 - Next.js app deployed on Vercel (free tier)
 - Groq to query LLM models (free tier limits 15-30 requests/min depending on model) 
 - Discord for logging
@@ -38,3 +39,9 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Future Considerations
+- Engineer better prompts, adjust model parameters, sanitize inputs 
+- To improve calculator accuracy could look into Groq [tool use](https://console.groq.com/docs/tool-use) to get the LLM to call a calculation function
+- Look into Wolfram Alpha API?
+- Try OpenAI models (likely better models available, but no free tier and some models are expensive)
