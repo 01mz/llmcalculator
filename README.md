@@ -5,13 +5,13 @@ Calculator powered by LLMs.
 <img src="./images/example1.png" width="300">
 <img src="./images/example1010.png" width="300">
 
-### Audio Input
+### Voice Input
 <img src="./images/audio_example.png" width="300">
 
-### Image Input
+### Camera Input
 <img src="./images/image_example2.png" width="300">
 <img src="./images/image_example3.png" width="300">
-<img src="./images/image_example3_1.png" width="300">
+<img src="./images/image_example3_1.png" width="500">
 
 ## Architecture
 No credit card tech stack:
