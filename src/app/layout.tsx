@@ -16,7 +16,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "LLMCalculator",
-  description: "LLM as a basic calculator",
+  description: "Calculator powered by LLMs",
 };
 
 export default function RootLayout({

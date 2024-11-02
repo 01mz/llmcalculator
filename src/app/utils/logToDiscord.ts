@@ -2,8 +2,7 @@ const channelId = process.env.DISCORD_CHANNEL_ID;
 const botToken = process.env.DISCORD_BOT_TOKEN;
 
 export async function logToDiscord(req: Request, message: string, file?: File) {
-    const { searchParams } = new URL(req.url);
-    const detectedIp = searchParams.get('ip') ?? '?';
+    const detectedIp = req.headers.get("x-real-ip") ?? req.headers.get("x-forwarded-for")?.split(/, /)[0] ?? '?';
 
     const formData = new FormData();
     if (file) {
