@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import Groq from "groq-sdk";
 import { userPrompt } from "./userPrompt";
-import { logToDiscord } from "@/app/utils/logToDiscord";
+import { logToDiscord } from "@/lib/server/logToDiscord";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 

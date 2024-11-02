@@ -1,4 +1,4 @@
-import { sanitizeInput } from "./utils/sanitizeInput";
+import { sanitizeInput } from "@/lib/shared/sanitizeInput";
 
 type OperatorFn = (a: number, b?: number) => number;
 

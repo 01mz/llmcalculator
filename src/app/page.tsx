@@ -2,9 +2,9 @@
 
 import { ChangeEvent, useRef, useState } from "react";
 import debounce from 'lodash.debounce';
-import { shuntingYardCalculate } from "./shuntingYardCalculate";
+import { shuntingYardCalculate } from "@/lib/client/shuntingYardCalculate";
 import styles from './page.module.css';
-import { models } from "./utils/models";
+import { models } from "@/lib/shared/models";
 
 export default function Home() {
   const [input, setInput] = useState<string>('');
