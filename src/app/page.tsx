@@ -35,12 +35,12 @@ export default function Home() {
 
     setLLMResult1('...');
     setLLMResult2('...');
-    LLMcalculate(input, models["llama3-8b-8192"])
+    LLMcalculate(input, models["llama-3.1-8b-instant"])
       .then((res) => {
         setLLMResult1(res)
       });
 
-    LLMcalculate(input, models["llama-3.1-70b-versatile"])
+    LLMcalculate(input, models["llama-3.3-70b-versatile"])
       .then((res) => {
         setLLMResult2(res)
       });
@@ -55,9 +55,9 @@ export default function Home() {
       <div className={styles.label}>Input:</div>
       <OverflowText className={styles.inputDisplay} text={input || '0'} />
 
-      <div className={styles.label}>{models[models["llama3-8b-8192"]]}:</div>
+      <div className={styles.label}>{models[models["llama-3.1-8b-instant"]]}:</div>
       <OverflowText text={`= ${LLMResult1}`} />
-      <div className={styles.label}>{models[models["llama-3.1-70b-versatile"]]}:</div>
+      <div className={styles.label}>{models[models["llama-3.3-70b-versatile"]]}:</div>
       <OverflowText text={`= ${LLMResult2}`} />
       <div className={styles.label}>Shunting Yard Algorithm:</div>
       <OverflowText text={`= ${SYResult}`} />

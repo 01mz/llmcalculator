@@ -1,6 +1,7 @@
 import React, { ChangeEvent, useRef, useState } from 'react'
 import styles from '../page.module.css';
 import debounce from 'lodash.debounce';
+import { models } from '@/lib/shared/models';
 
 type VoiceInputProps = {
     setInput: React.Dispatch<React.SetStateAction<string>>,
@@ -8,6 +9,7 @@ type VoiceInputProps = {
 };
 
 export default function VoiceInput({ setInput, compute }: VoiceInputProps) {
+    const modelName = models[models['whisper-large-v3-turbo']];
     const [isRecording, setIsRecording] = useState(false);
     const [audioUrl, setAudioUrl] = useState<string>('');
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -79,7 +81,7 @@ export default function VoiceInput({ setInput, compute }: VoiceInputProps) {
     }, 100);
 
     return <details>
-        <summary>🔊 Voice Input <span className={styles.label}>(whisper-large-v3-turbo)</span></summary>
+        <summary>🔊 Voice Input <span className={styles.label}>({modelName})</span></summary>
         <div className={styles.audioInputContainer}>
             <div className={styles.label}>Capture voice:</div>
             <button onClick={isRecording ? stopRecording : startRecording}>

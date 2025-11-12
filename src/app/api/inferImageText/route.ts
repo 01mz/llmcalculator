@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import Groq from "groq-sdk";
 import { userPrompt } from "./userPrompt";
 import { logToDiscord } from "@/lib/server/logToDiscord";
+import { models } from "@/lib/shared/models";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
@@ -28,7 +29,7 @@ async function getGroqChatCompletion(imageUrl: string) {
         "content": ""
       }
     ],
-    "model": "llama-3.2-90b-vision-preview",
+    "model": models[models['meta-llama/llama-4-scout-17b-16e-instruct']],
     "temperature": 0,
     "max_tokens": 1024,
     "top_p": 1,

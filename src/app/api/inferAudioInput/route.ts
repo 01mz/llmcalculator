@@ -2,13 +2,14 @@ import { NextResponse } from "next/server";
 import Groq from "groq-sdk";
 import { userPrompt } from "./userPrompt";
 import { logToDiscord } from "@/lib/server/logToDiscord";
+import { models } from "@/lib/shared/models";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 async function getGroqTranscription(audioFilePath: File) {
   return groq.audio.transcriptions.create({
     file: audioFilePath,
-    model: "whisper-large-v3-turbo",
+    model: models[models['whisper-large-v3-turbo']],
     prompt: userPrompt,
     response_format: "json",
     temperature: 0.0,

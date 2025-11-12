@@ -1,6 +1,7 @@
 import React, { ChangeEvent, useRef, useState } from 'react'
 import styles from '../page.module.css';
 import debounce from 'lodash.debounce';
+import { models } from '@/lib/shared/models';
 
 type ImageInputProps = {
     setInput: React.Dispatch<React.SetStateAction<string>>,
@@ -8,6 +9,7 @@ type ImageInputProps = {
 };
 
 export default function ImageInput({ setInput, compute }: ImageInputProps) {
+    const modelName = models[models['meta-llama/llama-4-scout-17b-16e-instruct']].split('/')[1];
     const [imageInput, setImageInput] = useState<string>('');
     const videoRef = useRef<HTMLVideoElement>(null);
     const [stream, setStream] = useState<MediaStream | null>(null);
@@ -82,7 +84,7 @@ export default function ImageInput({ setInput, compute }: ImageInputProps) {
     };
 
     return <details>
-        <summary>📸 Camera Input <span className={styles.label}>(llama-3.2-90b-vision-preview)</span></summary>
+        <summary>📸 Camera Input <span className={styles.label}>({modelName})</span></summary>
         <div className={styles.imageInputContainer}>
             <div className={styles.label}>Capture image:</div>
             <div>
